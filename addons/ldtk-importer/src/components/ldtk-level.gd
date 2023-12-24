@@ -9,7 +9,6 @@ extends Node2D
 @export var bg_color: Color
 
 @onready var entities: LDTKEntityLayer = $Entities
-var gem_scene: Resource = preload("res://scenes/entities/Shine_gem.tscn")
 
 func _ready() -> void:
 	queue_redraw()
@@ -20,7 +19,7 @@ func _draw() -> void:
 		
 func load_entities():
 	for entity in entities.entities:
-		var scene: Resource = load("res://scenes/entities/" + entity.identifier + ".tscn")
+		var scene: Resource = load("res://scenes/entities/" + entity.identifier.to_lower() + ".tscn")
 		var node: Node = scene.instantiate()
 		node.position = entity.position
 		call_deferred("add_child", node)

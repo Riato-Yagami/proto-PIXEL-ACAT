@@ -40,7 +40,7 @@ player = NodePath("../Player")
 camera_offset = Vector2(0, -40)
 
 [node name="PlayerSpawn" type="Node2D" parent="Game"]
-position = Vector2(691, -929)
+position = Vector2(-104, -76)
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3
