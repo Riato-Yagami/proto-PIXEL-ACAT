@@ -1,0 +1,89 @@
+[gd_scene load_steps=5 format=3 uid="uid://c0141vtvtl83k"]
+
+[ext_resource type="Script" path="res://platformer_controller/platformer_controller.gd" id="1_2qdat"]
+[ext_resource type="Texture2D" uid="uid://di5a1pv5iuup3" path="res://icon.png" id="2_qtsa8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mhmhv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ka1kj"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Game" type="Node2D" parent="."]
+
+[node name="PlatformerController2D" type="CharacterBody2D" parent="Game"]
+position = Vector2(0, -42)
+script = ExtResource("1_2qdat")
+input_left = null
+input_right = null
+input_special = null
+input_jump = null
+max_jump_height = 170.0
+min_jump_height = 50.0
+double_jump_height = null
+jump_duration = 0.35
+jump_squat_duration = 0.1
+falling_gravity_multiplier = null
+max_jump_amount = 2
+max_acceleration = null
+friction = null
+can_hold_jump = null
+binary_jump = null
+coyote_time = null
+jump_buffer = null
+horizontal_dash_duration = 0.2
+horizontal_dash_speed = null
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/PlatformerController2D"]
+shape = SubResource("RectangleShape2D_mhmhv")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/PlatformerController2D/CollisionShape2D"]
+scale = Vector2(0.295, 0.295)
+texture = ExtResource("2_qtsa8")
+
+[node name="Camera2D" type="Camera2D" parent="Game/PlatformerController2D"]
+position = Vector2(0, 42)
+
+[node name="Platform" type="StaticBody2D" parent="Game"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Platform"]
+scale = Vector2(20, 1)
+shape = SubResource("RectangleShape2D_ka1kj")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/Platform/CollisionShape2D"]
+scale = Vector2(0.315, 0.315)
+texture = ExtResource("2_qtsa8")
+
+[node name="Platform2" type="StaticBody2D" parent="Game"]
+position = Vector2(417, -55)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Platform2"]
+scale = Vector2(20, 1)
+shape = SubResource("RectangleShape2D_ka1kj")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/Platform2/CollisionShape2D"]
+scale = Vector2(0.315, 0.315)
+texture = ExtResource("2_qtsa8")
+
+[node name="Platform3" type="StaticBody2D" parent="Game"]
+position = Vector2(-405, -55)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Platform3"]
+scale = Vector2(20, 1)
+shape = SubResource("RectangleShape2D_ka1kj")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/Platform3/CollisionShape2D"]
+scale = Vector2(0.315, 0.315)
+texture = ExtResource("2_qtsa8")
+
+[node name="Platform4" type="StaticBody2D" parent="Game"]
+position = Vector2(-513, 147)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/Platform4"]
+position = Vector2(82, -44)
+scale = Vector2(200, 1)
+shape = SubResource("RectangleShape2D_ka1kj")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/Platform4/CollisionShape2D"]
+scale = Vector2(0.315, 0.315)
+texture = ExtResource("2_qtsa8")

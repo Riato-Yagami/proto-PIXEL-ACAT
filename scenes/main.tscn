@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://c0141vtvtl83k"]
+
+[ext_resource type="Script" path="res://scripts/worldManager.gd" id="1_5bp83"]
+[ext_resource type="PackedScene" uid="uid://bludcanti0bb0" path="res://scenes/player.tscn" id="3_mwo6r"]
+[ext_resource type="PackedScene" uid="uid://8hsmmssg5yy8" path="res://scenes/levels/level_001.tscn" id="4_v2nl5"]
+[ext_resource type="Script" path="res://scripts/playerCamera.gd" id="4_wmooe"]
+[ext_resource type="Script" path="res://scripts/menu.gd" id="5_usjna"]
+
+[sub_resource type="Environment" id="Environment_xfqtp"]
+background_mode = 3
+background_color = Color(0.423529, 0.607843, 1, 1)
+glow_enabled = true
+glow_blend_mode = 1
+volumetric_fog_density = 0.4919
+adjustment_enabled = true
+
+[node name="Main" type="Node2D"]
+
+[node name="Game" type="Node2D" parent="."]
+
+[node name="World" type="Node2D" parent="Game"]
+script = ExtResource("1_5bp83")
+
+[node name="level_001" parent="Game/World" instance=ExtResource("4_v2nl5")]
+position = Vector2(-269, -274)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Game/World"]
+environment = SubResource("Environment_xfqtp")
+
+[node name="Player" parent="Game" node_paths=PackedStringArray("player_camera", "player_spawn") instance=ExtResource("3_mwo6r")]
+position = Vector2(-141, -79)
+player_camera = NodePath("../PlayerCamera")
+player_spawn = NodePath("../PlayerSpawn")
+jump_count = 1
+
+[node name="PlayerCamera" type="Camera2D" parent="Game" node_paths=PackedStringArray("player")]
+position = Vector2(-107, -109)
+script = ExtResource("4_wmooe")
+player = NodePath("../Player")
+camera_offset = Vector2(0, -40)
+
+[node name="PlayerSpawn" type="Node2D" parent="Game"]
+position = Vector2(691, -929)
+
+[node name="Menu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_usjna")

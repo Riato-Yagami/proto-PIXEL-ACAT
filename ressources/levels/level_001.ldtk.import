@@ -1,0 +1,33 @@
+[remap]
+
+importer="ldtk.import"
+type="PackedScene"
+uid="uid://cog123k0jqkfl"
+path="res://.godot/imported/level_001.ldtk-6e47ad2bbff5e17a619c7d9b5660a170.scn"
+
+[deps]
+
+files=["res://ressources/levels/tilesets/tileset8x8.res", "res://ressources/levels/tilesets/tileset16x16.res"]
+
+source_file="res://ressources/levels/level_001.ldtk"
+dest_files=["res://.godot/imported/level_001.ldtk-6e47ad2bbff5e17a619c7d9b5660a170.scn", "res://ressources/levels/tilesets/tileset8x8.res", "res://ressources/levels/tilesets/tileset16x16.res"]
+
+[params]
+
+World=""
+separate_world_layers=false
+Level=""
+Tileset=""
+force_tileset_reimport=false
+tileset_custom_data=false
+atlas_texture_type=0
+Entity=""
+use_entity_placeholders=false
+Post Import=""
+tileset_post_import=""
+entities_post_import=""
+level_post_import=""
+world_post_import=""
+Debug=""
+verbose_output=false
+verbose_post_import=false

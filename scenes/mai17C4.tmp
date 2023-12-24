@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://c0141vtvtl83k"]
+
+[ext_resource type="Script" path="res://scripts/worldManager.gd" id="1_5bp83"]
+[ext_resource type="PackedScene" uid="uid://bludcanti0bb0" path="res://scenes/player.tscn" id="3_mwo6r"]
+[ext_resource type="PackedScene" uid="uid://8hsmmssg5yy8" path="res://scenes/levels/level_001.tscn" id="4_v2nl5"]
+[ext_resource type="Script" path="res://scripts/playerCamera.gd" id="4_wmooe"]
+[ext_resource type="Script" path="res://scripts/shineGem.gd" id="5_hampv"]
+[ext_resource type="Texture2D" uid="uid://di5a1pv5iuup3" path="res://icon.png" id="5_wsfco"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2tkdi"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Game" type="Node2D" parent="."]
+
+[node name="ShineGem" type="Node2D" parent="Game"]
+position = Vector2(874, -650)
+script = ExtResource("5_hampv")
+
+[node name="Area2D" type="Area2D" parent="Game/ShineGem"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Game/ShineGem/Area2D"]
+position = Vector2(37, 2)
+shape = SubResource("RectangleShape2D_2tkdi")
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/ShineGem/Area2D/CollisionShape2D"]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_wsfco")
+
+[node name="World" type="Node2D" parent="Game"]
+script = ExtResource("1_5bp83")
+
+[node name="level_001" parent="Game/World" instance=ExtResource("4_v2nl5")]
+position = Vector2(-269, -274)
+
+[node name="Player" parent="Game" node_paths=PackedStringArray("player_camera", "player_spawn") instance=ExtResource("3_mwo6r")]
+player_camera = NodePath("../PlayerCamera")
+player_spawn = NodePath("../PlayerSpawn")
+
+[node name="PlayerCamera" type="Camera2D" parent="Game" node_paths=PackedStringArray("player")]
+position = Vector2(-107, -109)
+script = ExtResource("4_wmooe")
+player = NodePath("../Player")
+
+[node name="PlayerSpawn" type="Node2D" parent="Game"]
+position = Vector2(927, -570)
