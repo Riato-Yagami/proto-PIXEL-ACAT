@@ -4,12 +4,21 @@ class_name PlayerController
 
 signal jumped(is_ground_jump: bool)
 signal hit_ground()
+signal player_death(death_position: Vector2)
+signal player_spawned(spawn_position: Vector2, initial: bool)
 
 @export var player_camera: Node
 @export var player_spawn: Node
 @export var player_animation: AnimatedSprite2D
 
+var is_dead := false
+
 var current_room_area: Area2D
+var new_room_area: Area2D
+
+@export var out_of_bound_delay : float = 0.1
+@onready var out_of_bound_timer = Timer.new()
+var is_out_of_bound := true
 
 @export_group("Controls")
 
@@ -20,12 +29,13 @@ var current_room_area: Area2D
 @export var input_special : String = "special"
 @export var input_jump : String = "jump"
 @export var input_reset : String = "reset"
+@export var input_attack : String = "attack"
 
 @export_group("Jump")
 
-const DEFAULT_MAX_JUMP_HEIGHT = 70
+const DEFAULT_MAX_JUMP_HEIGHT = 60
 const DEFAULT_MIN_JUMP_HEIGHT = 20
-const DEFAULT_DOUBLE_JUMP_HEIGHT = 100
+const DEFAULT_DOUBLE_JUMP_HEIGHT = 60
 const DEFAULT_JUMP_DURATION = 0.28
 
 const DEFAULT_JUMP_SQUAT_DURATION = 0.1
@@ -94,7 +104,7 @@ var _jump_squat_duration: float = DEFAULT_JUMP_SQUAT_DURATION
 @export var falling_gravity_multiplier = 1.5
 ## Amount of jumps allowed before needing to touch the ground again. Set to 2 for double jump.
 @export var jump_count = 1
-@export var max_acceleration = 5000
+@export var max_acceleration = 3600
 @export var friction = 20
 @export var can_hold_jump : bool = false
 @export var binary_jump : bool = true
@@ -120,6 +130,8 @@ enum JumpType {NONE, GROUND, AIR}
 ## The type of jump the player is performing. Is JumpType.NONE if they player is on the ground.
 var current_jump_type: JumpType = JumpType.NONE
 
+enum DashType {NONE, HORIZONTAL, OMNIDIRECTIONAL}
+var current_dash_type: DashType = DashType.NONE
 # Used to detect if player just hit the ground
 var _was_on_ground: bool
 
@@ -139,11 +151,6 @@ var have_bonus_jump := false
 @export var helpless_state_enabled:= true
 
 @export_group("Horizontal Dash")
-const DEFAULT_H_DASH_DURATION = 0.1
-const DEFAULT_H_DASH_SPEED = 500
-const DEFAULT_H_DASH_PAUSE_DURATION = 0.1
-const DEFAULT_H_DASH_COUNT = 1
-
 var holding_special := false
 
 enum Stance {NEUTRAL, UP, DOWN, LEFT, RIGHT}
@@ -153,28 +160,10 @@ var special_stance: Stance = Stance.NEUTRAL
 enum Direction {LEFT, RIGHT}
 var current_direction: Direction = Direction.RIGHT
 
-var _h_dash_duration: float = DEFAULT_H_DASH_DURATION
-@export var h_dash_duration: float = DEFAULT_H_DASH_DURATION: 
-	get: return _h_dash_duration
-	set(value): 
-		_h_dash_duration = value + h_dash_pause_duration
-		
-var _h_dash_speed: float = DEFAULT_H_DASH_SPEED
-@export var h_dash_speed: float = DEFAULT_H_DASH_SPEED: 
-	get: return _h_dash_speed
-	set(value): _h_dash_speed = value
-	
-var _h_dash_pause_duration: float = DEFAULT_H_DASH_PAUSE_DURATION
-@export var h_dash_pause_duration: float = DEFAULT_H_DASH_PAUSE_DURATION: 
-	get: return _h_dash_pause_duration
-	set(value): 
-		_h_dash_pause_duration = value
-		_h_dash_duration = value + h_dash_duration
-
-var _h_dash_count: float = DEFAULT_H_DASH_COUNT
-@export var h_dash_count: float = DEFAULT_H_DASH_COUNT:
-	get: return _h_dash_count
-	set(value): _h_dash_count = value
+@export var h_dash_duration: float = 0.1
+@export var h_dash_speed: float = 700
+@export var h_dash_pause_duration: float = 0.1
+@export var h_dash_count: int = 1
 
 @onready var h_dash_timer = Timer.new()
 @onready var h_dash_pause_timer = Timer.new()
@@ -182,35 +171,13 @@ var _h_dash_count: float = DEFAULT_H_DASH_COUNT
 var h_dash_left : int
 
 @export_group("Omnidirectional  Dash")
-const DEFAULT_O_DASH_DURATION = 0.3
-const DEFAULT_O_DASH_SPEED = 500
-const DEFAULT_O_DASH_PAUSE_DURATION = 0.5
-const DEFAULT_O_DASH_COUNT = 1
-
+const DEFAULT_O_DASH_DURATION = 0.1
 var o_dash_direction = Vector2(0,0)
 
-var _o_dash_duration: float = DEFAULT_O_DASH_DURATION
-@export var o_dash_duration: float = DEFAULT_O_DASH_DURATION: 
-	get: return _o_dash_duration
-	set(value): 
-		_o_dash_duration = value + o_dash_pause_duration
-		
-var _o_dash_speed: float = DEFAULT_H_DASH_SPEED
-@export var o_dash_speed: float = DEFAULT_H_DASH_SPEED: 
-	get: return _o_dash_speed
-	set(value): _o_dash_speed = value
-	
-var _o_dash_pause_duration: float = DEFAULT_H_DASH_PAUSE_DURATION
-@export var o_dash_pause_duration: float = DEFAULT_H_DASH_PAUSE_DURATION: 
-	get: return _o_dash_pause_duration
-	set(value): 
-		_o_dash_pause_duration = value
-		_o_dash_duration = value + o_dash_duration
-
-var _o_dash_count: float = DEFAULT_H_DASH_COUNT
-@export var o_dash_count: float = DEFAULT_H_DASH_COUNT:
-	get: return _o_dash_count
-	set(value): _o_dash_count = value
+@export var o_dash_duration: float = 0.2
+@export var o_dash_pause_duration: float = 0.25 
+@export var o_dash_speed: float = 250
+@export var o_dash_count: int = 1
 
 @onready var o_dash_timer = Timer.new()
 @onready var o_dash_pause_timer = Timer.new()
@@ -227,6 +194,13 @@ var o_dash_left : int
 @export_group("Shine")
 @export var shine: Node2D
 @export var shine_gravity_mutliplicator: float = 0.1
+
+@export_group("Attack")
+@export var attack_collision : CollisionShape2D
+@export var attack_duration : float = 1.0
+var is_attacking := false
+
+var is_animation_locked := false
 
 func _init():
 	default_gravity = calculate_gravity(max_jump_height, jump_duration)
@@ -253,7 +227,7 @@ func _ready():
 		jump_squat_timer.one_shot = true
 		
 	add_child(h_dash_timer)
-	h_dash_timer.wait_time = h_dash_duration
+	h_dash_timer.wait_time = h_dash_duration + h_dash_pause_duration
 	h_dash_timer.one_shot = true
 	
 	add_child(h_dash_pause_timer)
@@ -261,22 +235,34 @@ func _ready():
 	h_dash_pause_timer.one_shot = true
 	
 	add_child(o_dash_timer)
-	o_dash_timer.wait_time = o_dash_duration
+	o_dash_timer.wait_time = o_dash_duration + o_dash_pause_duration
 	o_dash_timer.one_shot = true
 	
 	add_child(o_dash_pause_timer)
 	o_dash_pause_timer.wait_time = o_dash_pause_duration
 	o_dash_pause_timer.one_shot = true
 	
-	respawn()
+	add_child(out_of_bound_timer)
+	out_of_bound_timer.wait_time = out_of_bound_delay
+	out_of_bound_timer.one_shot = true
+	
+	spawn(true)
 
 
 func _input(_event):
+	if is_dead: 
+		acc = Vector2.ZERO
+		return
+		
 	acc.x = 0
 	current_stance = Stance.NEUTRAL
 	
 	if Input.is_action_pressed(input_reset):
-		respawn()
+		kill_player()
+		
+	if Input.is_action_pressed(input_attack):
+		if not is_helpless() and not using_special() and not is_attacking:
+			attack()
 		
 	if Input.is_action_pressed(input_left):
 		current_stance = Stance.LEFT
@@ -316,17 +302,19 @@ func _input(_event):
 		holding_jump = false
 
 
-func _physics_process(delta):	
-	if is_coyote_timer_running() or current_jump_type == JumpType.NONE:
-		restore_jumps()
-		h_dash_left = h_dash_count
-		o_dash_left = o_dash_count
+func _physics_process(delta):
+	if is_coyote_timer_running() or (
+		current_jump_type == JumpType.NONE 
+		and current_dash_type == DashType.NONE):
+			restore_jumps()
+			restore_dashs()
 	if is_feet_on_ground() and current_jump_type == JumpType.NONE:
 		start_coyote_timer()
 		
 	# Check if we just hit the ground this frame
 	if not _was_on_ground and is_feet_on_ground():
 		current_jump_type = JumpType.NONE
+		current_dash_type = DashType.NONE
 		if is_jump_buffer_timer_running() and not can_hold_jump: 
 			jump()
 		
@@ -374,10 +362,15 @@ func _physics_process(delta):
 			velocity.x = h_dash_speed * (1 if special_stance == Stance.RIGHT else -1)
 		
 	_was_on_ground = is_feet_on_ground()
+	
+	if is_dead:
+		velocity = Vector2.ZERO
+		
 	move_and_slide()
 	
 	player_animation.flip_h = current_direction == Direction.LEFT
 	
+func _process(delta):
 	if velocity.x == 0: play_animation("idle")
 	else: play_animation("walk")
 	if velocity.y < 0 : play_animation("rise")
@@ -385,6 +378,14 @@ func _physics_process(delta):
 		
 	if is_h_dash_timer_running(): play_animation("hdash")
 	elif is_o_dash_timer_running(): play_animation("odash")
+	
+	if is_helpless():
+		player_animation.self_modulate = Color(0,1.6,1)
+	else:
+		player_animation.self_modulate = Color(1,1,1)
+		
+	if is_out_of_bound and out_of_bound_timer.is_stopped():
+		kill_player()
 
 ## Use this instead of coyote_timer.start() to check if the coyote_timer is enabled first
 func start_coyote_timer():
@@ -433,8 +434,12 @@ func is_o_dash_timer_running():
 func is_o_dash_pause_timer_running():
 	return not o_dash_pause_timer.is_stopped()
 
+func is_out_of_bound_timer_running():
+	return not out_of_bound_timer.is_stopped()
+	
 func using_dash() -> bool:
 	return is_h_dash_timer_running() or is_o_dash_timer_running()
+	
 func using_special() -> bool:
 	return using_dash() or using_shine()
 	
@@ -489,11 +494,15 @@ func special():
 		o_dash()
 		
 func h_dash():
+	coyote_timer.stop()
+	current_dash_type = DashType.HORIZONTAL
 	h_dash_left -= 1
 	start_h_dash_pause_timer()
 	start_h_dash_timer()
 	
 func o_dash():
+	coyote_timer.stop()
+	current_dash_type = DashType.OMNIDIRECTIONAL
 	o_dash_left -= 1
 	o_dash_fire_sprite.visible = true
 	start_o_dash_pause_timer()
@@ -537,7 +546,14 @@ func double_jump():
 	jumped.emit(false)
 
 func is_helpless():
-	return helpless_state_enabled and (h_dash_left < 1 or o_dash_left < 1)
+	return (helpless_state_enabled 
+	and (h_dash_left < 1 or o_dash_left < 1) 
+	and not using_dash())
+	
+func restore_dashs():
+#	print("restore dash")
+	h_dash_left = h_dash_count
+	o_dash_left = o_dash_count
 
 ## Perform a ground jump without checking if the player is able to.
 func ground_jump():
@@ -591,36 +607,63 @@ func calculate_friction(time_to_max):
 func calculate_speed(p_max_speed, p_friction):
 	return (p_max_speed / p_friction) - p_max_speed
 
-func respawn():
+func spawn(initial:= false):
 	position = player_spawn.position
+	is_out_of_bound = false
+	load_room()
+	player_spawned.emit(position, initial)
+	is_dead = false
+	
+func load_room():
+	if(current_room_area != null):
+		var map: LDTKLevel = current_room_area.get_parent()
+		map.reload_room()
 	
 func set_spawn(pos):
 	player_spawn.position = pos
-
+	
+func attack():
+	play_animation("attack")
+	is_animation_locked = true
+	is_attacking = true
+	attack_collision.disabled = false
+	await TimeManager.sleep(attack_duration)
+	stop_attack()
+	
+func stop_attack():
+	attack_collision.disabled = true
+	is_animation_locked = false
+	is_attacking = false
+	
 func play_animation(animation_name: String):
-	player_animation.play(animation_name)
+	if not is_animation_locked: player_animation.play(animation_name)
 	
 func _on_room_detector_area_entered(area: Area2D) -> void:
-#	print("Player's exited: " + area.name)
+#	print("New area: " + area.name)
 	if(current_room_area == null):
 		enter_room_area(area)
-	current_room_area = area
+		
+	new_room_area = area
 
 func _on_room_detector_area_exited(area: Area2D) -> void:
-#	print("Player's entered: " + area.name)
-	if(area != current_room_area):
+#	print("Leave area: " + area.name)
+	if(new_room_area != area):
 		exit_room_area(area)
-		enter_room_area(current_room_area)
-	else: #Out of bounds
-		kill_player()
+		enter_room_area(new_room_area)
+	elif(current_room_area == area):
+		is_out_of_bound = true
+		out_of_bound_timer.start()
 		
 func exit_room_area(area: Area2D):
 	var map: LDTKLevel = area.get_parent()
-	map.unload_entities()
+	map.unload_room()
 	
 func enter_room_area(area: Area2D):
+#	print("Player's entered: " + area.name)
+	is_out_of_bound = false
+	current_room_area = area
 	var map: LDTKLevel = area.get_parent()
-	map.load_entities()
+	map.load_room()
 	var collision_shape: CollisionShape2D = area.get_child(0)
 	var shape_size: Vector2 = collision_shape.shape.extents * 2
 	var shape_position: Vector2 = collision_shape.global_position
@@ -629,4 +672,30 @@ func enter_room_area(area: Area2D):
 	set_spawn(position)
 	
 func kill_player():
-	respawn()
+	is_dead = true
+	player_death.emit(position)
+	
+func _on_hit_box_area_entered(area: Area2D):
+	var object : PlayerTriggered = area.get_parent()
+#	print(object.name + " entered Player's hitbox")
+	if(object._player_condition(self)):
+		object._player_trigger(self)
+
+
+func _on_hurt_box_body_entered(body: Node):
+#	print(body.name + " entered Player's hurtbox")
+	kill_player()
+
+
+func _on_hurt_box_area_entered(area: Area2D):
+	kill_player()
+
+
+func _on_attack_hit_box_area_entered(area):
+	var object : Node = area.get_parent()
+	if object is Triggered:
+		var trigger : Triggered = object
+		trigger._trigger(self)
+
+func _on_screen_transition_death_transition_complete():
+	spawn()

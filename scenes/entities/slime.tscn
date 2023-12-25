@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2e688f4c7dt0"]
+
+[ext_resource type="PackedScene" uid="uid://c34r46jsxxhig" path="res://scenes/entities/enemy.tscn" id="1_kjctl"]
+[ext_resource type="SpriteFrames" uid="uid://beg027wg6ignp" path="res://ressources/animations/slime_animation.tres" id="2_ru6dc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p10tu"]
+size = Vector2(9, 7)
+
+[node name="Slime" instance=ExtResource("1_kjctl")]
+
+[node name="Sprite" parent="." index="0"]
+sprite_frames = ExtResource("2_ru6dc")
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+position = Vector2(0.5, 2.5)
+shape = SubResource("RectangleShape2D_p10tu")

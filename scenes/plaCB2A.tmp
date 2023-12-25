@@ -1,0 +1,137 @@
+[gd_scene load_steps=13 format=3 uid="uid://bludcanti0bb0"]
+
+[ext_resource type="Script" path="res://scripts/playerController.gd" id="1_m0ur7"]
+[ext_resource type="PackedScene" uid="uid://bef1spuw62mxa" path="res://scenes/laser.tscn" id="2_chi2o"]
+[ext_resource type="Texture2D" uid="uid://cfwj8up71v8sy" path="res://ressources/sprites/tileset/tranquil_tunnels_transparent.png" id="3_0g02q"]
+[ext_resource type="Script" path="res://scripts/shine.gd" id="4_q3xiy"]
+[ext_resource type="SpriteFrames" uid="uid://gwlclrst81mi" path="res://ressources/animations/character_animation.tres" id="5_0pmfi"]
+[ext_resource type="Texture2D" uid="uid://bat606jmai1xy" path="res://ressources/sprites/shine.png" id="5_owmrs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_33kfy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mhmhv"]
+size = Vector2(11, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_514l0"]
+size = Vector2(10, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_owhus"]
+size = Vector2(15, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mme0q"]
+size = Vector2(15, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5a6n5"]
+size = Vector2(32, 20)
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("player_animation", "o_dash_fire_sprite", "shine", "attack_collision")]
+script = ExtResource("1_m0ur7")
+player_animation = NodePath("Animation")
+input_up = null
+input_down = null
+input_left = null
+input_right = null
+input_special = null
+input_jump = null
+input_reset = null
+input_attack = null
+max_jump_height = null
+min_jump_height = null
+double_jump_height = null
+jump_duration = null
+jump_squat_duration = 0.1
+falling_gravity_multiplier = null
+jump_count = null
+max_acceleration = null
+friction = null
+can_hold_jump = null
+binary_jump = null
+coyote_time = null
+jump_buffer = null
+helpless_state_enabled = null
+h_dash_duration = 0.18
+h_dash_speed = 800.0
+h_dash_pause_duration = null
+h_dash_count = null
+o_dash_duration = 0.05
+o_dash_speed = 300.0
+o_dash_pause_duration = 0.35
+o_dash_count = null
+o_dash_fire_sprite = NodePath("Fire")
+laser_scene = ExtResource("2_chi2o")
+can_hold_shoot = null
+shine = NodePath("Shine")
+shine_gravity_mutliplicator = 0.06
+attack_collision = NodePath("Attack/AttackHitBox/CollisionShape2D")
+attack_duration = 0.6
+
+[node name="Fire" type="Sprite2D" parent="."]
+visible = false
+z_index = 1
+texture = ExtResource("3_0g02q")
+region_enabled = true
+region_rect = Rect2(948, 705, 14, 15)
+
+[node name="Shine" type="Node2D" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("4_q3xiy")
+sprite = NodePath("Sprite")
+
+[node name="HitBox" type="Area2D" parent="Shine"]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Shine/HitBox"]
+shape = SubResource("RectangleShape2D_33kfy")
+
+[node name="Sprite" type="Sprite2D" parent="Shine"]
+visible = false
+texture = ExtResource("5_owmrs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_mhmhv")
+
+[node name="RoomDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomDetector"]
+shape = SubResource("RectangleShape2D_514l0")
+
+[node name="Animation" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = ExtResource("5_0pmfi")
+animation = &"attack"
+
+[node name="HitBox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+shape = SubResource("RectangleShape2D_owhus")
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+shape = SubResource("RectangleShape2D_mme0q")
+
+[node name="Attack" type="Node2D" parent="."]
+
+[node name="AttackHitBox" type="Area2D" parent="Attack"]
+collision_layer = 0
+collision_mask = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attack/AttackHitBox"]
+shape = SubResource("RectangleShape2D_5a6n5")
+disabled = true
+
+[connection signal="area_entered" from="Shine/HitBox" to="Shine" method="_on_hit_box_area_entered"]
+[connection signal="area_exited" from="Shine/HitBox" to="Shine" method="_on_hit_box_area_exited"]
+[connection signal="area_entered" from="RoomDetector" to="." method="_on_room_detector_area_entered"]
+[connection signal="area_exited" from="RoomDetector" to="." method="_on_room_detector_area_exited"]
+[connection signal="area_entered" from="HitBox" to="." method="_on_hit_box_area_entered"]
+[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]
+[connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
+[connection signal="area_entered" from="Attack/AttackHitBox" to="." method="_on_attack_hit_box_area_entered"]

@@ -17,5 +17,6 @@ laser_life_duration = 0.8
 shape = SubResource("RectangleShape2D_03coj")
 
 [node name="Sprite2D" type="Sprite2D" parent="CollisionShape2D"]
+z_index = 1
 scale = Vector2(0.2, 0.05)
 texture = ExtResource("1_nh2qf")

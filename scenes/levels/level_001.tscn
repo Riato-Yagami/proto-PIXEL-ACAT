@@ -3,3 +3,77 @@
 [ext_resource type="PackedScene" uid="uid://cog123k0jqkfl" path="res://ressources/levels/level_001.ldtk" id="1_m6lov"]
 
 [node name="level_001" instance=ExtResource("1_m6lov")]
+
+[node name="Tilemaps8x8" parent="Level_0" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_1" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_1/z_index = -10
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_2" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_3" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_1/z_index = -10
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_4" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_5" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_6" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_7" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)
+
+[node name="Tilemaps8x8" parent="Level_8" index="0"]
+layer_0/enabled = true
+layer_0/modulate = Color(1, 1, 1, 0)
+layer_2/enabled = true
+layer_2/modulate = Color(1, 1, 1, 0)
+layer_4/enabled = true
+layer_4/modulate = Color(1, 1, 1, 0)

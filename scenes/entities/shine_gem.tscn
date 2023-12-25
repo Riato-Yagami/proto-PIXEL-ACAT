@@ -7,6 +7,7 @@
 size = Vector2(8, 8)
 
 [node name="ShineGem" type="Node2D"]
+z_index = 10
 script = ExtResource("1_qwq5u")
 
 [node name="Sprite" type="Sprite2D" parent="."]

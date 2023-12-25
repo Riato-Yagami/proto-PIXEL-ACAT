@@ -17,7 +17,7 @@ func end_shine():
 func trigger_nodes_in_hitbox():
 	for node in nodes_in_hitbox:
 #		print("triggering:" + node.name)
-		node.shine_trigger(player)
+		node._shine_trigger(player)
 	
 func _on_hit_box_area_entered(area: Area2D) -> void:
 	var object : ShineTriggered = area.get_parent()

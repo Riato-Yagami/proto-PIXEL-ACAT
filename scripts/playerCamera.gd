@@ -2,7 +2,8 @@ extends Camera2D
 # from https://www.youtube.com/watch?v=lPJMj-ov7ys
 
 # Amount of smoothing used to follow the player value is from 0 to 1
-@export var follow_smoothing: float = 0.1
+@export var follow_smoothing: float = 0.6
+@export var room_transition_smoothing: float = 0.1
 @export var player: Node
 @export var camera_offset: Vector2 = Vector2(0,0)
  
@@ -11,6 +12,8 @@ var smoothing: float
  
 var current_room_center: Vector2
 var current_room_size: Vector2
+
+var float_position: Vector2 = position
  
 @onready var view_size: Vector2 = get_viewport_rect().size
 var zoom_view_size: Vector2
@@ -24,6 +27,9 @@ func _ready() -> void:
 #	await(get_tree().create_timer(0.1),"timeout")
 	smoothing = follow_smoothing
  
+func _process(delta):
+	smoothing = lerp(smoothing, follow_smoothing, 1 * delta)
+		
 func _physics_process(delta: float) -> void:
 	# Get view size considering camera zoom
 	zoom_view_size = view_size * zoom
@@ -32,7 +38,8 @@ func _physics_process(delta: float) -> void:
 	var target_position := calculate_target_position(current_room_center, current_room_size)
  
 	# Interpolate(lerp) camera position to target position by the smoothing
-	position = lerp(position, target_position, smoothing)
+	float_position = lerp(float_position, target_position, smoothing)
+	position = round(float_position)
  
 func calculate_target_position(room_center: Vector2, room_size: Vector2) -> Vector2:
 	# The distance from the center of the room to the camera boundary on one side.
@@ -62,6 +69,7 @@ func calculate_target_position(room_center: Vector2, room_size: Vector2) -> Vect
 	return return_position
 	
 func change_room(room_position: Vector2, room_size: Vector2) -> void:
+	smoothing = room_transition_smoothing
 	current_room_center = room_position
 	current_room_size = room_size
 #

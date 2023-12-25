@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://c34r46jsxxhig"]
+
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_ijcrb"]
+[ext_resource type="SpriteFrames" uid="uid://clwls8tbx7727" path="res://ressources/animations/wizard_animation.tres" id="2_bthq3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n5iwf"]
+size = Vector2(30, 56)
+
+[node name="Wizard" type="Node2D"]
+script = ExtResource("1_ijcrb")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -4)
+sprite_frames = ExtResource("2_bthq3")
+
+[node name="HitBox" type="Area2D" parent="."]
+position = Vector2(0, -2)
+collision_layer = 256
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+shape = SubResource("RectangleShape2D_n5iwf")

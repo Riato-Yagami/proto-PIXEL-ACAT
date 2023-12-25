@@ -1,10 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://c0141vtvtl83k"]
+[gd_scene load_steps=14 format=3 uid="uid://c0141vtvtl83k"]
 
 [ext_resource type="Script" path="res://scripts/worldManager.gd" id="1_5bp83"]
+[ext_resource type="Texture2D" uid="uid://qq8r0k0kgtw4" path="res://ressources/sprites/sky/Clouds 1/1.png" id="1_ouicd"]
+[ext_resource type="Texture2D" uid="uid://c6yvqcs5ng38g" path="res://ressources/sprites/sky/Clouds 1/2.png" id="2_76ju7"]
 [ext_resource type="PackedScene" uid="uid://bludcanti0bb0" path="res://scenes/player.tscn" id="3_mwo6r"]
+[ext_resource type="Texture2D" uid="uid://mua6tq8si2ra" path="res://ressources/sprites/sky/Clouds 1/4.png" id="3_qo8rl"]
 [ext_resource type="PackedScene" uid="uid://8hsmmssg5yy8" path="res://scenes/levels/level_001.tscn" id="4_v2nl5"]
 [ext_resource type="Script" path="res://scripts/playerCamera.gd" id="4_wmooe"]
 [ext_resource type="Script" path="res://scripts/menu.gd" id="5_usjna"]
+[ext_resource type="Script" path="res://scripts/screenTransition.gd" id="9_fb20l"]
+[ext_resource type="Shader" path="res://ressources/shaders/screen_transition.gdshader" id="9_xp41b"]
+[ext_resource type="Texture2D" uid="uid://dc7h14pc06j6e" path="res://ressources/sprites/screenTransition.png" id="10_7slhl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gaywd"]
+shader = ExtResource("9_xp41b")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/amount = 1.0
+shader_parameter/image = ExtResource("10_7slhl")
 
 [sub_resource type="Environment" id="Environment_xfqtp"]
 background_mode = 3
@@ -16,31 +28,69 @@ adjustment_enabled = true
 
 [node name="Main" type="Node2D"]
 
+[node name="ScreenTransition" type="CanvasLayer" parent="."]
+scale = Vector2(8.02, 4.515)
+transform = Transform2D(8.02, 0, 0, 4.515, 0, 0)
+script = ExtResource("9_fb20l")
+spawn_duration = 0.9
+respawn_duration = 0.35
+death_duration = 0.4
+delay_duration = 0.1
+
+[node name="ColorRect" type="ColorRect" parent="ScreenTransition"]
+material = SubResource("ShaderMaterial_gaywd")
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="Game" type="Node2D" parent="."]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Game"]
+offset = Vector2(70, 100)
+transform = Transform2D(1, 0, 0, 1, 70, 100)
+
+[node name="ParallaxLayer1" type="ParallaxLayer" parent="Game/ParallaxBackground"]
+scale = Vector2(2, 2)
+motion_scale = Vector2(0.1, 0.1)
+motion_mirroring = Vector2(576, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/ParallaxBackground/ParallaxLayer1"]
+texture = ExtResource("1_ouicd")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Game/ParallaxBackground"]
+motion_scale = Vector2(0.2, 0.2)
+motion_mirroring = Vector2(576, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/ParallaxBackground/ParallaxLayer2"]
+texture = ExtResource("2_76ju7")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Game/ParallaxBackground"]
+motion_scale = Vector2(0.4, 0.4)
+motion_mirroring = Vector2(576, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Game/ParallaxBackground/ParallaxLayer3"]
+texture = ExtResource("3_qo8rl")
 
 [node name="World" type="Node2D" parent="Game"]
 script = ExtResource("1_5bp83")
 
 [node name="level_001" parent="Game/World" instance=ExtResource("4_v2nl5")]
-position = Vector2(-269, -274)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Game/World"]
 environment = SubResource("Environment_xfqtp")
 
 [node name="Player" parent="Game" node_paths=PackedStringArray("player_camera", "player_spawn") instance=ExtResource("3_mwo6r")]
-position = Vector2(-141, -79)
+z_index = 10
 player_camera = NodePath("../PlayerCamera")
 player_spawn = NodePath("../PlayerSpawn")
-jump_count = 1
 
 [node name="PlayerCamera" type="Camera2D" parent="Game" node_paths=PackedStringArray("player")]
-position = Vector2(-107, -109)
+position = Vector2(-29, 4)
 script = ExtResource("4_wmooe")
 player = NodePath("../Player")
 camera_offset = Vector2(0, -40)
 
 [node name="PlayerSpawn" type="Node2D" parent="Game"]
-position = Vector2(-104, -76)
+position = Vector2(1271, -28)
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3
@@ -48,3 +98,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("5_usjna")
+
+[connection signal="death_transition_complete" from="ScreenTransition" to="Game/Player" method="_on_screen_transition_death_transition_complete"]
+[connection signal="player_death" from="Game/Player" to="ScreenTransition" method="_on_player_player_death"]
+[connection signal="player_spawned" from="Game/Player" to="ScreenTransition" method="_on_player_player_spawned"]

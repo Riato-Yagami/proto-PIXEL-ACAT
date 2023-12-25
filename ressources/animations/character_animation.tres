@@ -1,12 +1,17 @@
-[gd_resource type="SpriteFrames" load_steps=36 format=3 uid="uid://gwlclrst81mi"]
+[gd_resource type="SpriteFrames" load_steps=41 format=3 uid="uid://gwlclrst81mi"]
 
+[ext_resource type="Texture2D" uid="uid://c8lxnvm20jus" path="res://ressources/sprites/character/attack/AttackCrystal0.png" id="1_k1he1"]
 [ext_resource type="Texture2D" uid="uid://l4op0thltvvv" path="res://ressources/sprites/character/idle/Idle1.png" id="1_oc1rq"]
+[ext_resource type="Texture2D" uid="uid://dwcuecswrse5x" path="res://ressources/sprites/character/attack/AttackCrystal1.png" id="1_r1wgq"]
 [ext_resource type="Texture2D" uid="uid://caun8yxjv0w1i" path="res://ressources/sprites/character/fall/Falling1.png" id="1_w58mc"]
+[ext_resource type="Texture2D" uid="uid://cy87rrvdvd22w" path="res://ressources/sprites/character/attack/AttackCrystal2.png" id="2_4ld3k"]
 [ext_resource type="Texture2D" uid="uid://vwx5is7dys75" path="res://ressources/sprites/character/fall/Falling2.png" id="2_07a2k"]
 [ext_resource type="Texture2D" uid="uid://cgmvmmiywc4yt" path="res://ressources/sprites/character/idle/Idle2.png" id="2_yl3ip"]
+[ext_resource type="Texture2D" uid="uid://c1m13bp7l6d0c" path="res://ressources/sprites/character/attack/AttackCrystal3.png" id="3_g0gm4"]
 [ext_resource type="Texture2D" uid="uid://dwvtvvnct5lod" path="res://ressources/sprites/character/idle/Idle3.png" id="3_x5hvq"]
 [ext_resource type="Texture2D" uid="uid://yp542rohvvuo" path="res://ressources/sprites/character/fall/Falling3.png" id="3_xbabi"]
 [ext_resource type="Texture2D" uid="uid://dwqgm51c8iild" path="res://ressources/sprites/character/fall/Falling4.png" id="4_1r7hv"]
+[ext_resource type="Texture2D" uid="uid://br7ix0mpfep6r" path="res://ressources/sprites/character/attack/AttackCrystal4.png" id="4_aibmw"]
 [ext_resource type="Texture2D" uid="uid://ck35eo2s34kg2" path="res://ressources/sprites/character/idle/Idle4.png" id="4_mf37g"]
 [ext_resource type="Texture2D" uid="uid://b2xow0nkof762" path="res://ressources/sprites/character/idle/Idle5.png" id="5_4ney0"]
 [ext_resource type="Texture2D" uid="uid://c3fyvop5eoix0" path="res://ressources/sprites/character/fall/Falling5.png" id="5_r1ujg"]
@@ -38,6 +43,26 @@
 
 [resource]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_k1he1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_r1wgq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_4ld3k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_g0gm4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_aibmw")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("1_w58mc")
@@ -79,7 +104,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"hdash",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://dsi8fo4anixbc"]
+
+[ext_resource type="Script" path="res://scenes/playerGem.gd" id="1_57vhw"]
+[ext_resource type="Texture2D" uid="uid://cfwj8up71v8sy" path="res://ressources/sprites/tileset/tranquil_tunnels_transparent.png" id="2_juwgo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2tkdi"]
+size = Vector2(8, 8)
+
+[node name="player_gem" type="Node2D"]
+script = ExtResource("1_57vhw")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+z_index = 10
+texture = ExtResource("2_juwgo")
+region_enabled = true
+region_rect = Rect2(824, 680, 8, 8)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_2tkdi")

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7lv4ie7nejea"]
+
+[ext_resource type="PackedScene" uid="uid://c34r46jsxxhig" path="res://scenes/entities/enemy.tscn" id="1_m4akm"]
+
+[node name="Wizard" instance=ExtResource("1_m4akm")]
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+position = Vector2(-3, -1)

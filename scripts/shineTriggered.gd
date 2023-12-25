@@ -5,20 +5,20 @@ var activated:= true
 @export var cooldown: int = 1
 @onready var sprite: Sprite2D = $Sprite
 
-func shine_trigger(player: PlayerController):
+func _shine_trigger(player: PlayerController):
 	if(activated): 
-		desactivate()
-		shine_effect(player)
+		_desactivate()
+		_shine_effect(player)
 
-func desactivate():
+func _desactivate():
 	activated = false
 	sprite.visible = false
 	await TimeManager.sleep(cooldown)
-	activate()
+	_activate()
 
-func activate():
+func _activate():
 	sprite.visible = true
 	activated = true
 
-func shine_effect(player: PlayerController):
+func _shine_effect(player: PlayerController):
 	pass
