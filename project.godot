@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Proto ACAT"
+config/name="Proto_PIXEL_ACAT"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://ressources/sprites/character/idle/Idle2.png"
